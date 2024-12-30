@@ -161,6 +161,8 @@ config.keys = {
 		mods = "OPT",
 		action = act.SendKey({ key = "f", mods = "ALT" }),
 	},
+	{ key = "j", mods = "CMD", action = act.ActivatePaneDirection("Down") },
+	{ key = "k", mods = "CMD", action = act.ActivatePaneDirection("Up") },
 }
 
 for i = 1, 9 do
