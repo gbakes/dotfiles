@@ -53,6 +53,24 @@ keymap.set("n", "<leader>/", "<leader>gcc", { desc = "Toggle comment line" })
 keymap.set("n", "<leader>wr", "<cmd>SessionRestore<CR>", { desc = "Restore session for cwd" }) -- restore last workspace session for current directory
 keymap.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for auto session root dir" }) -- save workspace session for current working directory
 
+-- LSP
+-- Toggle LSP diagnostics
+keymap.set("n", "<leader>tt", function()
+	local diagnostics_active = vim.diagnostic.is_enabled()
+	if diagnostics_active then
+		vim.diagnostic.enable(false)
+	else
+		vim.diagnostic.enable()
+	end
+end, { desc = "Toggle LSP diagnostics" })
+
+-- Toggle inline diagnostics
+keymap.set("n", "<leader>ti", function()
+	local current_value = vim.diagnostic.config().virtual_text
+	vim.diagnostic.config({
+		virtual_text = not current_value,
+	})
+end, { desc = "Toggle inline diagnostics" })
 --
 
 vim.api.nvim_set_keymap("n", "<leader>db", ":DB<CR>", { noremap = true, silent = true })

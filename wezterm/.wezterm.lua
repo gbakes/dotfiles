@@ -74,12 +74,12 @@ end)
 -- Keybindings
 config.keys = {
 	{
-		key = "\\",
+		key = "f",
 		mods = "LEADER",
 		action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
 	},
 	{
-		key = "-",
+		key = "d",
 		mods = "LEADER",
 		action = action.SplitVertical({ domain = "CurrentPaneDomain" }),
 	},
