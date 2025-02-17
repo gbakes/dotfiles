@@ -53,7 +53,7 @@ inner.horizontal = 10
 inner.vertical =   10
 outer.left =       10
 outer.bottom =     10
-outer.top =        [{ monitor.main = 20 }, {  monitor."Mi Monitor" = 50 }, 100]  
+outer.top =        [{ monitor.main = 44 }, {  monitor."Mi Monitor" = 20 }, 30]  
 outer.right =      10
 
 # 'main' binding mode declaration
@@ -162,7 +162,7 @@ alt-shift-l = ['join-with right', 'mode main']
 'N' = 'secondary'
 'M' = 'main'
 'V' = 'secondary'
-'D' = 'secondary'
+'D' = 'main'
 'W' = 'main'
 'I' = 'main'
 '1' = 'secondary'
