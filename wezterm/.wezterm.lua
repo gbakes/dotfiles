@@ -56,21 +56,21 @@ local function move_pane(key, direction)
 		action = wezterm.action.ActivatePaneDirection(direction),
 	}
 end
--- Event to handle renaming the tab
+
+-- function to rename tab
 wezterm.on("rename-tab", function(window, pane)
 	window:perform_action(
 		act.PromptInputLine({
 			description = "Rename Tab",
-			action = function(new_name)
-				if new_name then
-					window:active_tab():set_title(new_name)
+			action = wezterm.action_callback(function(window, pane, line)
+				if line then
+					window:active_tab():set_title(line)
 				end
-			end,
+			end),
 		}),
 		pane
 	)
 end)
-
 -- Keybindings
 config.keys = {
 	{
@@ -141,12 +141,10 @@ config.keys = {
 			end),
 		}),
 	},
-	-- Rename tab with ctrl-shift-n
-	{
-		key = "n",
-		mods = "CTRL|SHIFT",
-		action = act.EmitEvent("rename-tab"),
-	},
+	-- sksesy = "n",
+	-- mods = "CTRL|SHIFT",
+	-- action = act.EmitEvent("rename-tab"),
+	-- },
 	-- Rebind OPT-Left, OPT-Right as ALT-b, ALT-f respectively to match Terminal.app behavior
 	{
 		key = "LeftArrow",
