@@ -6,9 +6,21 @@ keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
 
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
+-- General QOL Improvements
+
+keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Centers screen after moving down" })
+keymap.set("n", "<C-i>", "<C-d>zz", { desc = "Centers screen after moving down" })
+keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Centers screen after moving up" })
+
+keymap.set("n", "]m", "]mzz", { desc = "Centers screen after navigating function down" })
+
+keymap.set("n", "d", '"dd', { noremap = true, desc = "delete and send text to special delete register" })
+keymap.set("n", "dd", '"ddd', { noremap = true, desc = "delete line and send text to special delete register" })
+keymap.set("v", "d", '"dd', { noremap = true, desc = "visual mode, delete and send text to special delete register" })
+
 -- increment/decrement numbers
-keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
-keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
+keymap.set("n", "<leader>=", "<C-a>", { desc = "Increment number" }) -- increment
+keymap.set("n", "<leader>_", "<C-x>", { desc = "Decrement number" }) -- decrement
 
 -- window management
 keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
@@ -53,28 +65,35 @@ keymap.set("n", "<leader>/", "<leader>gcc", { desc = "Toggle comment line" })
 keymap.set("n", "<leader>wr", "<cmd>SessionRestore<CR>", { desc = "Restore session for cwd" }) -- restore last workspace session for current directory
 keymap.set("n", "<leader>ws", "<cmd>SessionSave<CR>", { desc = "Save session for auto session root dir" }) -- save workspace session for current working directory
 
+-- substitute
+
+-- keymap.set("n", "ls", substitute.operator, { desc = "Substitute with motion" })
+-- keymap.set("n", "lss", substitute.line, { desc = "Substitute line" })
+-- keymap.set("n", "LS", substitute.eol, { desc = "Substitute to end of line" })
+-- keymap.set("x", "ls", substitute.visual, { desc = "Substitute in visual mode" })
+
 -- LSP
 -- Toggle LSP diagnostics
 keymap.set("n", "<leader>tt", function()
-	local diagnostics_active = vim.diagnostic.is_enabled()
-	if diagnostics_active then
-		vim.diagnostic.enable(false)
-	else
-		vim.diagnostic.enable()
-	end
+  local diagnostics_active = vim.diagnostic.is_enabled()
+  if diagnostics_active then
+    vim.diagnostic.enable(false)
+  else
+    vim.diagnostic.enable()
+  end
 end, { desc = "Toggle LSP diagnostics" })
 
 -- Toggle inline diagnostics
 keymap.set("n", "<leader>ti", function()
-	local current_value = vim.diagnostic.config().virtual_text
-	vim.diagnostic.config({
-		virtual_text = not current_value,
-	})
+  local current_value = vim.diagnostic.config().virtual_text
+  vim.diagnostic.config({
+    virtual_text = not current_value,
+  })
 end, { desc = "Toggle inline diagnostics" })
 --
 
 vim.api.nvim_set_keymap("n", "<leader>db", ":DB<CR>", { noremap = true, silent = true })
 
 vim.keymap.set("n", "<leader><leader>", function()
-	vim.cmd("so")
+  vim.cmd("so")
 end)
