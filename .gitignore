@@ -1,1 +1,4 @@
 oh-my-zsh
+nvim/.gitignore
+containers/podman/machine/applehv/podman-machine-default.json
+filezilla/filezilla.xml
