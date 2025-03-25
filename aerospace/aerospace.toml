@@ -162,7 +162,7 @@ alt-shift-l = ['join-with right', 'mode main']
 'N' = 'secondary'
 'M' = 'main'
 'V' = 'secondary'
-'D' = 'main'
+'D' = 'secondary'
 'W' = 'main'
 'I' = 'main'
 '1' = 'secondary'
@@ -175,6 +175,9 @@ alt-shift-l = ['join-with right', 'mode main']
 # 5 = '^built-in retina display$'  # Case insensitive regex match
 # 6 = ['secondary', 'dell']
 
+# mdls -name kMDItemCFBundleIdentifier /Applications/APPLICATION_NAME.app
+# aerospace list-apps
+
 [[on-window-detected]]
 if.app-id = 'com.github.wez.wezterm'
 run = "move-node-to-workspace T"
@@ -182,6 +185,10 @@ run = "move-node-to-workspace T"
 [[on-window-detected]]
 if.app-id = 'org.mozilla.firefox' 
 run = "move-node-to-workspace B"
+
+[[on-window-detected]]
+if.app-id = 'app.zen-browser.zen' 
+run = "move-node-to-workspace I"
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
