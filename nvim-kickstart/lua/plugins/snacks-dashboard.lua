@@ -1,5 +1,6 @@
 return {
 	"folke/snacks.nvim",
+	---@type snacks.Config
 	opts = {
 		dashboard = {
 			sections = {
@@ -7,7 +8,6 @@ return {
 				{
 					pane = 2,
 					section = "terminal",
-					cmd = "bpytop",
 					height = 5,
 					padding = 1,
 				},
