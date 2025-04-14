@@ -8,7 +8,8 @@ return {
 				{
 					pane = 2,
 					section = "terminal",
-					height = 5,
+					cmd = "task list",
+					height = 10,
 					padding = 1,
 				},
 				{ section = "keys", gap = 1, padding = 1 },

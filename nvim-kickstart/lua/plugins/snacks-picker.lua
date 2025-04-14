@@ -1,7 +1,9 @@
 return {
 	"folke/snacks.nvim",
 	opts = {
+
 		picker = {
+			hidden = true,
 			win = {
 				preview = {
 					wo = {

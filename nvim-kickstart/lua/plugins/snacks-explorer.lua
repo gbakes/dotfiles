@@ -1,6 +1,6 @@
 return {
 	"folke/snacks.nvim",
 	opts = {
-		explorer = {},
+		explorer = { hidden = true },
 	},
 }

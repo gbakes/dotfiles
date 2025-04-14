@@ -53,7 +53,7 @@ inner.horizontal = 10
 inner.vertical =   10
 outer.left =       10
 outer.bottom =     10
-outer.top =        [{ monitor.main = 25 },  60]  
+outer.top =        [ { monitor."D27QO" = 60},  60]  
 outer.right =      10
 
 # 'main' binding mode declaration
@@ -156,17 +156,20 @@ alt-shift-l = ['join-with right', 'mode main']
 
 [workspace-to-monitor-force-assignment]
 
-'T' = 'secondary'
-'B' = 'secondary'
-'E' = 'main'
-'N' = 'secondary'
-'M' = 'main'
-'V' = 'secondary'
-'D' = 'secondary'
-'W' = 'main'
-'I' = 'main'
-'1' = 'secondary'
-'2' = 'main'
+# Home Monitors: D27QO, ED320QR
+
+'T' = ['ED320QR', '1']
+'B' = ['D27QO', '1']
+'E' = ['built-in']
+'N' = ['D27QO', '1']
+'M' = ['built-in', '3']
+'V' = ['ED320QR', '1']
+'D' = ['built-in', '2']
+'W' = ['built-in', '2']
+'I' = ['built-in', '2']
+'1' = ['1']
+'2' = ['2']
+'3' = ['3']
 
 # 1 = 1                            # Monitor sequence number from left to right. 1-based indexing
 # 2 = 'main'                       # Main monitor

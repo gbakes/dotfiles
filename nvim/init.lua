@@ -1,4 +1,2 @@
-require("gbakes.core")
-require("gbakes.lazy")
-
-diagnostics = { disable = { "missing-fields" } }
+-- bootstrap lazy.nvim, LazyVim and your plugins
+require("config.lazy")
