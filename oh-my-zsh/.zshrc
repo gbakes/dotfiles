@@ -109,7 +109,6 @@ setopt HIST_EXPIRE_DUPS_FIRST
 
 # ---- Zoxide (better cd) ----
 eval "$(zoxide init zsh)"
-
 alias cd="z"
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
@@ -154,6 +153,16 @@ vv() {
   # Open Neovim with the selected config
   NVIM_APPNAME=$(basename $config) nvim $@
 }
-source /usr/local/share/powerlevel10k/powerlevel10k.zsh-theme
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+plugins=(
+  git
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+  zoxide
+)
+
+(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
