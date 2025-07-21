@@ -80,7 +80,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+# plugins=(git) # Commented out - using the full plugins list below
 
 source $HOME/.config/oh-my-zsh/oh-my-zsh.sh
 
@@ -129,6 +129,9 @@ alias klayers='bash /Users/georgebaker/Documents/2.\ Projects/zmk_sofle2/local_b
 alias kld='bash /Users/georgebaker/Documents/2.\ Projects/zmk_sofle2/local_build/last_deploy.sh'
 
 alias docs='cd /Users/georgebaker/Documents'
+alias work='cd /Users/georgebaker/Documents/Work'
+alias notes='cd /Users/georgebaker/Documents/Notes'
+alias projects='cd "/Users/georgebaker/Documents/2. Projects"'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

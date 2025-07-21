@@ -13,3 +13,6 @@ log/
 
 # zcompile cached files
 *.zwc
+
+.zprofile
+.zhistory
