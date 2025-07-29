@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# Common project directories to search
+dirs=(
+  "$HOME/projects"
+  "$HOME/work"
+  "$HOME/dev"
+  "$HOME/code"
+  "$HOME/.config"
+  "$HOME/Documents/notes"
+  "$HOME/Documents/work"
+  "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Personal"
+  "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents"
+)
+
+# Find directories
+found_dirs=""
+for dir in "${dirs[@]}"; do
+  if [[ -d "$dir" ]]; then
+    if [[ "$dir" == "$HOME/.config" ]] || [[ "$dir" == "$HOME/Documents/notes" ]] || [[ "$dir" == "$HOME/Documents/work" ]]; then
+      # For .config, notes, and work, go deeper (maxdepth 3), exclude .git
+      found_dirs+=$(find "$dir" -maxdepth 3 -type d -name ".git" -prune -o -type d -print 2>/dev/null)$'\n'
+    else
+      # Other directories, standard depth, exclude .git
+      found_dirs+=$(find "$dir" -maxdepth 2 -type d -name ".git" -prune -o -type d -print 2>/dev/null)$'\n'
+    fi
+  fi
+done
+
+# Use fzf to select
+selected=$(echo "$found_dirs" | grep -v "^$" | sort -u | fzf --height=50% --reverse --header="Select project directory")
+
+if [[ -z $selected ]]; then
+  exit 0
+fi
+
+# Session name from directory basename
+session_name=$(basename "$selected" | tr . _)
+
+# Create session if it doesn't exist
+if ! tmux has-session -t="$session_name" 2>/dev/null; then
+  tmux new-session -d -s "$session_name" -c "$selected"
+fi
+
+# Switch to the session and exit this window
+tmux switch-client -t "$session_name"
+tmux kill-window
+

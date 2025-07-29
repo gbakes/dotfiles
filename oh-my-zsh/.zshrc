@@ -3,12 +3,21 @@ if [[ -f "/opt/homebrew/bin/brew" ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+
+# Github profiles 
+ssh-add ~/.ssh/github_personal 2>/dev/null
+ssh-add ~/.ssh/github_work 2>/dev/null
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -112,6 +121,13 @@ SAVEHIST=1000
 HISTSIZE=999
 setopt HIST_EXPIRE_DUPS_FIRST
 
+# Enable vi mode
+bindkey -v
+
+
+# easyexit
+alias "e"=exit
+
 # ---- Zoxide (better cd) ----
 # Initialize zoxide after instant prompt to avoid console output warning
 if command -v zoxide &> /dev/null; then
@@ -138,6 +154,10 @@ alias klayers='bash /Users/georgebaker/Documents/2.\ Projects/zmk_sofle2/local_b
 alias kld='bash /Users/georgebaker/Documents/2.\ Projects/zmk_sofle2/local_build/last_deploy.sh'
 
 alias docs='cd /Users/georgebaker/Documents'
+alias work='cd /Users/georgebaker/Documents/Work'
+alias notes='cd /Users/georgebaker/Documents/Notes'
+
+alias projects="cd /Users/georgebaker/Library/Mobile Documents/com~apple~CloudDocs/Documents/2. Projects"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

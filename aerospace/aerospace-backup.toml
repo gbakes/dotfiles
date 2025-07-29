@@ -52,7 +52,7 @@ inner.horizontal = 10
 inner.vertical =   10
 outer.left =       10
 outer.bottom =     10
-outer.top =        [ { monitor."built-in" = 10},  20]  
+outer.top =        [ { monitor."D27QO" = 60},  60]  
 outer.right =      10
 
 # 'main' binding mode declaration
@@ -163,7 +163,7 @@ alt-shift-l = ['join-with right', 'mode main']
 'N' = ['D27QO', '1']
 'M' = ['built-in', '3']
 'V' = ['ED320QR', '1']
-'D' = ['LG UltraFine', 'built-in', '2']
+'D' = ['built-in', '2']
 'W' = ['built-in', '2']
 'I' = ['built-in', '2']
 '1' = ['1']
