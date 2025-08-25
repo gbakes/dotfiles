@@ -1,11 +1,6 @@
--- Helper function:
--- returns color scheme dependant on operating system theme setting (dark/light)
+-- Use Gruvbox theme consistently
 local function color_scheme_for_appearance(appearance)
-  if appearance:find("Dark") then
-    return "Tokyo Night"
-  else
-    return "Tokyo Night Day"
-  end
+  return "Gruvbox dark, medium (base16)"
 end
 
 -- Pull in WezTerm API
@@ -38,24 +33,31 @@ config.use_fancy_tab_bar = false
 config.tab_max_width = 32
 config.colors = {
   tab_bar = {
-    active_tab = { fg_color = "#6c7086", bg_color = "#74c7ec" },
+    background = "#282828",
+    active_tab = { 
+      bg_color = "#ebdbb2", 
+      fg_color = "#282828",
+      intensity = "Bold"
+    },
+    inactive_tab = {
+      bg_color = "#3c3836",
+      fg_color = "#a89984",
+    },
+    inactive_tab_hover = {
+      bg_color = "#504945",
+      fg_color = "#ebdbb2",
+    },
   },
 }
 
 -- Leader Key
-config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 2000 }
+config.leader = { key = ";", mods = "CTRL", timeout_milliseconds = 2000 }
 
 -- Split Windows
 local action = wezterm.action
 
--- function for moving cursor between split panes
-local function move_pane(key, direction)
-  return {
-    key = key,
-    mods = "LEADER",
-    action = wezterm.action.ActivatePaneDirection(direction),
-  }
-end
+-- Disable wezterm pane management in favor of tmux
+-- Remove wezterm's pane navigation to avoid conflicts with tmux
 
 -- function to rename tab
 wezterm.on("rename-tab", function(window, pane)
@@ -71,48 +73,12 @@ wezterm.on("rename-tab", function(window, pane)
     pane
   )
 end)
--- Keybindings
+-- Keybindings - Simplified for tmux workflow
 config.keys = {
-  {
-    key = "f",
-    mods = "LEADER",
-    action = action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-  },
-  {
-    key = "d",
-    mods = "LEADER",
-    action = action.SplitVertical({ domain = "CurrentPaneDomain" }),
-  },
   {
     key = "A",
     mods = "CTRL|SHIFT",
     action = wezterm.action.QuickSelect,
-  },
-  { key = "[", mods = "LEADER", action = action.ActivateCopyMode },
-  {
-    key = "c",
-    mods = "LEADER",
-    action = action.SpawnTab("CurrentPaneDomain"),
-  },
-  move_pane("j", "Down"),
-  move_pane("k", "Up"),
-  move_pane("h", "Left"),
-  move_pane("l", "Right"),
-  {
-    key = "p",
-    mods = "LEADER",
-    action = action.ActivateTabRelative(-1),
-  },
-  {
-    key = "n",
-    mods = "LEADER",
-    action = action.ActivateTabRelative(1),
-  },
-  -- Show tab navigator
-  {
-    key = "s",
-    mods = "LEADER",
-    action = wezterm.action.ShowTabNavigator,
   },
   -- Show launcher menu
   {
@@ -129,27 +95,6 @@ config.keys = {
       args = { os.getenv("SHELL"), "-c", "$VISUAL $WEZTERM_CONFIG_FILE" },
     }),
   },
-  {
-    key = ",",
-    mods = "LEADER",
-    action = act.PromptInputLine({
-      description = "Enter new name for tab",
-      action = wezterm.action_callback(function(window, pane, line)
-        if line then
-          window:active_tab():set_title(line)
-        end
-      end),
-    }),
-  },
-  {
-    key = "[",
-    mods = "LEADER",
-    action = wezterm.action.ActivateCopyMode,
-  },
-  -- sksesy = "n",
-  -- mods = "CTRL|SHIFT",
-  -- action = act.EmitEvent("rename-tab"),
-  -- },
   -- Rebind OPT-Left, OPT-Right as ALT-b, ALT-f respectively to match Terminal.app behavior
   {
     key = "LeftArrow",
@@ -164,14 +109,6 @@ config.keys = {
     mods = "OPT",
     action = act.SendKey({ key = "f", mods = "ALT" }),
   },
-  -- Moving cursor across terminal panes
-  { key = "j", mods = "CMD", action = act.ActivatePaneDirection("Down") },
-  { key = "k", mods = "CMD", action = act.ActivatePaneDirection("Up") },
-  { key = "h", mods = "CMD", action = act.ActivatePaneDirection("Left") },
-  { key = "l", mods = "CMD", action = act.ActivatePaneDirection("Right") },
-
-  { key = "j", mods = "CTRL", action = act.AdjustPaneSize({ "Down", 5 }) },
-  { key = "k", mods = "CTRL", action = act.AdjustPaneSize({ "Up", 5 }) },
   {
     key = "c",
     mods = "CTRL",
@@ -195,13 +132,7 @@ config.keys = {
   },
 }
 
-for i = 1, 9 do
-  table.insert(config.keys, {
-    key = tostring(i),
-    mods = "LEADER",
-    action = action.ActivateTab(i - 1),
-  })
-end
+-- Remove wezterm tab switching - let tmux handle it
 
 -- Return config to WezTerm
 return config

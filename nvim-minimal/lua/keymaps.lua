@@ -11,27 +11,19 @@ keymap.set("i", "kj", "<ESC>", { desc = "Exit insert mode with kj" })
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
 -- General QOL improvements
--- keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Centers screen after moving down" })
-keymap.set("n", "<C-i>", "<C-d>zz", { noremap = true, desc = "Centers screen after moving down" })
-keymap.set("n", "<C-u>", "<C-u>zz", { noremap = true, desc = "Centers screen after moving up" })
+keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Centers screen after moving down" })
+keymap.set("n", "<C-i>", "<C-d>zz", { desc = "Centers screen after moving down" })
+keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Centers screen after moving up" })
 
 -- Centered search
 keymap.set("n", "n", "nzzzv", { desc = "Next search result centered" })
 keymap.set("n", "N", "Nzzzv", { desc = "Previous search result centered" })
 
--- Better delete/change (sends to special register instead of clipboard)
+-- Better delete (sends to special register instead of clipboard)
 keymap.set("n", "d", '"dd', { noremap = true, desc = "Delete to special register" })
 keymap.set("n", "dd", '"ddd', { noremap = true, desc = "Delete line to special register" })
 keymap.set("v", "d", '"dd', { noremap = true, desc = "Visual delete to special register" })
-keymap.set("n", "x", '"dx', { noremap = true, desc = "Delete char to special register" })
-keymap.set("n", "X", '"dX', { noremap = true, desc = "Delete char backwards to special register" })
-keymap.set("n", "c", '"dc', { noremap = true, desc = "Change to special register" })
-keymap.set("n", "cc", '"dcc', { noremap = true, desc = "Change line to special register" })
-keymap.set("v", "c", '"dc', { noremap = true, desc = "Visual change to special register" })
-keymap.set("n", "C", '"dC', { noremap = true, desc = "Change to end of line to special register" })
-keymap.set("n", "s", '"ds', { noremap = true, desc = "Substitute to special register" })
-keymap.set("n", "S", '"dS', { noremap = true, desc = "Substitute line to special register" })
-keymap.set("v", "s", '"ds', { noremap = true, desc = "Visual substitute to special register" })
+keymap.set("n", "x", '"_x', { noremap = true, desc = "Delete char without copying" })
 
 -- Stay in indent mode
 keymap.set("v", "<", "<gv", { noremap = true, desc = "Indent left and reselect" })
