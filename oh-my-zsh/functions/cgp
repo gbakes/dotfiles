@@ -1,0 +1,95 @@
+#!/usr/bin/env zsh
+
+cgp() {
+  # Find all SSH keys (excluding .pub files and known_hosts)
+  local ssh_keys=($(find ~/.ssh -name "id_*" -o -name "*github*" -o -name "*git*" | grep -v "\.pub$" | grep -v "known_hosts" | sort))
+  
+  if [[ ${#ssh_keys[@]} -eq 0 ]]; then
+    echo "No SSH keys found in ~/.ssh/"
+    return 1
+  fi
+
+  # Create options for fzf
+  local options=()
+  for key_path in $ssh_keys; do
+    local key_name=$(basename $key_path)
+    local profile_name=$(echo "$key_name" | sed 's/^github_//' | sed 's/^git_//')
+    options+=("$profile_name ($key_name)")
+  done
+
+  # Use fzf to select profile
+  local selected=$(printf '%s\n' "${options[@]}" | fzf --prompt="Git Profiles > " --height=~50% --layout=reverse --border --exit-0)
+  
+  # If user exits fzf without selecting, return
+  [[ -z $selected ]] && echo "No profile selected" && return
+
+  # Extract profile name and find corresponding key
+  local profile_name=$(echo "$selected" | sed 's/ (.*//')
+  local selected_key=""
+  
+  for key_path in $ssh_keys; do
+    local key_name=$(basename $key_path)
+    local current_profile=$(echo "$key_name" | sed 's/^github_//' | sed 's/^git_//')
+    if [[ "$current_profile" == "$profile_name" ]]; then
+      selected_key="$key_path"
+      break
+    fi
+  done
+
+  if [[ -z $selected_key ]]; then
+    echo "Could not find SSH key for profile: $profile_name"
+    return 1
+  fi
+
+  local key_name=$(basename $selected_key)
+  local ssh_host="github.com-$profile_name"
+
+  # Prompt for git name and email
+  echo "Selected profile: $profile_name"
+  echo -n "Enter git name: "
+  read git_name
+  echo -n "Enter git email: "
+  read git_email
+
+  # Set git config
+  git config --global user.name "$git_name"
+  git config --global user.email "$git_email"
+
+  # Add the selected key to ssh-agent
+  ssh-add "$selected_key" 2>/dev/null
+
+  # Update SSH config
+  local ssh_config="$HOME/.ssh/config"
+
+  # Remove existing entry for this host
+  if [[ -f "$ssh_config" ]]; then
+    sed -i.bak "/^Host $ssh_host$/,/^$/d" "$ssh_config"
+  fi
+
+  # Add new SSH config entry
+  cat >> "$ssh_config" << EOF
+
+Host $ssh_host
+    HostName github.com
+    User git
+    IdentityFile $selected_key
+EOF
+
+  echo "Added SSH config for $ssh_host"
+
+  # Update git remote if in a git repo
+  if git rev-parse --git-dir > /dev/null 2>&1; then
+    local current_remote=$(git remote get-url origin 2>/dev/null)
+    if [[ -n "$current_remote" ]]; then
+      # Extract repo path from current remote
+      local repo_path=$(echo "$current_remote" | sed -E 's|.*github\.com[/:]||' | sed 's|\.git$||')
+      local new_remote="git@$ssh_host:$repo_path.git"
+
+      git remote set-url origin "$new_remote"
+      echo "Updated remote to: $new_remote"
+    fi
+  fi
+
+  echo "Switched to profile: $git_name <$git_email>"
+  echo "Using SSH key: $key_name"
+}

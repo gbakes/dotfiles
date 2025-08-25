@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+current_session=$(tmux display-message -p '#S')
+
+# Get all sessions except current one, with action options
+sessions=$(tmux list-sessions -F '#S' | grep -v "^${current_session}$")
+
+# Build menu with actions
+menu_items=""
+for session in $sessions; do
+    menu_items+="switch:$session"$'\n'
+    menu_items+="delete:$session"$'\n' 
+    menu_items+="rename:$session"$'\n'
+done
+
+# Add current session rename/delete options
+if [[ -n $current_session ]]; then
+    menu_items+="rename:$current_session (current)"$'\n'
+    menu_items+="delete:$current_session (current)"$'\n'
+fi
+
+# Use fzf to select action:session
+selected=$(echo "$menu_items" | grep -v "^$" | fzf --reverse --height=60% --header="Select action:session" --preview="echo {}" --delimiter=":" --with-nth=1,2)
+
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+# Parse action and session
+action=$(echo "$selected" | cut -d':' -f1)
+session=$(echo "$selected" | cut -d':' -f2 | sed 's/ (current)$//')
+
+case $action in
+    "switch")
+        tmux switch-client -t "$session"
+        ;;
+    "delete")
+        if [[ "$session" == "$current_session" ]]; then
+            # If deleting current session, switch to another first
+            other_session=$(tmux list-sessions -F '#S' | grep -v "^${session}$" | head -1)
+            if [[ -n $other_session ]]; then
+                tmux switch-client -t "$other_session"
+            fi
+        fi
+        tmux kill-session -t "$session"
+        ;;
+    "rename")
+        printf "New name for session '$session': "
+        read -r new_name
+        if [[ -n $new_name ]]; then
+            tmux rename-session -t "$session" "$new_name"
+            if [[ "$session" == "$current_session" ]]; then
+                tmux switch-client -t "$new_name"
+            fi
+        fi
+        ;;
+esac
