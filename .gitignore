@@ -1,7 +1,9 @@
 github-copilot/
 oh-my-zsh/.zhistory
+oh-my-zsh/plugins/zsh-autosuggestions/
+oh-my-zsh/plugins/zsh-syntax-highlighting/
 tmux/plugins/tmp/
 tmux/plugins/tpm/
-oh-my-zsh/.zhistory
+tmux/plugins/**/
 .zsh_history
 .zhistory
