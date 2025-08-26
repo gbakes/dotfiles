@@ -6,23 +6,16 @@ after-startup-command = ['exec-and-forget sketchybar']
 
 start-at-login = true 
 
-exec-on-workspace-change = [
-  '/bin/bash',
-  '-c',
-  'sketchybar --trigger aerospace_workspace_changed FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
-]
-on-focus-changed = [
-  # 'move-mouse window-lazy-center',  # Commented out - can cause jitter
-  'exec-and-forget sketchybar --trigger front_app_switched',
-]
+exec-on-workspace-change = []
+on-focus-changed = []
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
-enable-normalization-flatten-containers = true
-enable-normalization-opposite-orientation-for-nested-containers = true
+enable-normalization-flatten-containers = false
+enable-normalization-opposite-orientation-for-nested-containers = false
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
 # You can set 0 to disable the padding feature
-accordion-padding = 30 
+accordion-padding = 0 
 
 # Possible values: tiles|accordion
 default-root-container-layout = 'tiles'
@@ -38,7 +31,7 @@ key-mapping.preset = 'qwerty'
 
 # Mouse follows focus when focused monitor changes
 # Drop it from your config, if you don't like this behavior
-on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+# on-focused-monitor-changed = ['move-mouse monitor-lazy-center']  # Disabled - can cause jitter
 
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
 # Possible values:
@@ -52,7 +45,7 @@ inner.horizontal = 10
 inner.vertical =   10
 outer.left =       10
 outer.bottom =     10
-outer.top =        [ { monitor."built-in" = 10},  20]  
+outer.top =        60  
 outer.right =      10
 
 # 'main' binding mode declaration
@@ -153,22 +146,22 @@ alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
 
-[workspace-to-monitor-force-assignment]
+# [workspace-to-monitor-force-assignment]  # Temporarily disabled to test jitter
 
-# Home Monitors: D27QO, ED320QR
+# # Home Monitors: D27QO, ED320QR
 
-'T' = ['ED320QR', '1']
-'B' = ['D27QO', '1']
-'E' = ['built-in']
-'N' = ['D27QO', '1']
-'M' = ['built-in', '3']
-'V' = ['ED320QR', '1']
-'D' = ['LG UltraFine', 'built-in', '2']
-'W' = ['built-in', '2']
-'I' = ['built-in', '2']
-'1' = ['1']
-'2' = ['2']
-'3' = ['3']
+# 'T' = ['ED320QR', '1']
+# 'B' = ['D27QO', '1']
+# 'E' = ['built-in']
+# 'N' = ['D27QO', '1']
+# 'M' = ['built-in', '3']
+# 'V' = ['ED320QR', '1']
+# 'D' = ['built-in', '2']
+# 'W' = ['built-in', '2']
+# 'I' = ['built-in', '2']
+# '1' = ['1']
+# '2' = ['2']
+# '3' = ['3']
 
 # 1 = 1                            # Monitor sequence number from left to right. 1-based indexing
 # 2 = 'main'                       # Main monitor
@@ -180,38 +173,38 @@ alt-shift-l = ['join-with right', 'mode main']
 # mdls -name kMDItemCFBundleIdentifier /Applications/APPLICATION_NAME.app
 # aerospace list-apps
 
-[[on-window-detected]]
-if.app-id = 'com.github.wez.wezterm'
-run = "move-node-to-workspace T"
-
-[[on-window-detected]]
-if.app-id = 'org.mozilla.firefox' 
-run = "move-node-to-workspace B"
-
-[[on-window-detected]]
-if.app-id = 'app.zen-browser.zen' 
-run = "move-node-to-workspace I"
-
-[[on-window-detected]]
-if.app-id = 'com.apple.finder'
-run = "move-node-to-workspace E"
-
-[[on-window-detected]]
-if.app-id = 'com.microsoft.VSCode'
-run = 'move-node-to-workspace V'
-
-[[on-window-detected]]
-if.app-id = 'com.spotify.client'
-run = 'move-node-to-workspace M'
-
-[[on-window-detected]]
-if.app-id = 'org.pgadmin.pgadmin4'
-run = 'move-node-to-workspace D'
-
-[[on-window-detected]]
-if.app-id = 'md.obsidian'
-run = 'move-node-to-workspace N'
-
-[[on-window-detected]]
-if.app-id = 'com.tinyspeck.slackmacgap'
-run = 'move-node-to-workspace W'
+# [[on-window-detected]]
+# if.app-id = 'com.github.wez.wezterm'
+# run = "move-node-to-workspace T"
+#
+# [[on-window-detected]]
+# if.app-id = 'org.mozilla.firefox' 
+# run = "move-node-to-workspace B"
+#
+# [[on-window-detected]]
+# if.app-id = 'app.zen-browser.zen' 
+# run = "move-node-to-workspace I"
+#
+# [[on-window-detected]]
+# if.app-id = 'com.apple.finder'
+# run = "move-node-to-workspace E"
+#
+# [[on-window-detected]]
+# if.app-id = 'com.microsoft.VSCode'
+# run = 'move-node-to-workspace V'
+#
+# [[on-window-detected]]
+# if.app-id = 'com.spotify.client'
+# run = 'move-node-to-workspace M'
+#
+# [[on-window-detected]]
+# if.app-id = 'org.pgadmin.pgadmin4'
+# run = 'move-node-to-workspace D'
+#
+# [[on-window-detected]]
+# if.app-id = 'md.obsidian'
+# run = 'move-node-to-workspace N'
+#
+# [[on-window-detected]]
+# if.app-id = 'com.tinyspeck.slackmacgap'
+# run = 'move-node-to-workspace W'

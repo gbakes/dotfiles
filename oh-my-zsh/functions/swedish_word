@@ -1,0 +1,181 @@
+#!/usr/bin/env zsh
+
+# Swedish Vocabulary Practice Function
+# Picks a random word from a random section in vocabulary files
+
+function swedish_word() {
+    # Seed random number generator with current time + microseconds + process ID
+    RANDOM=$(($(date +%s) + $(date +%N) / 1000000 + $$))
+    
+    local VOCAB_DIR="vocabulary"
+    local SWEDISH_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents/2. Projects/swedish"
+    local VOCAB_PATH="$SWEDISH_DIR/$VOCAB_DIR"
+
+    # Check if vocabulary directory exists
+    if [[ ! -d "$VOCAB_PATH" ]]; then
+        echo "Error: Vocabulary directory not found at $VOCAB_PATH"
+        return 1
+    fi
+
+    # Get all .md files except README.md
+    get_vocab_files() {
+        find "$VOCAB_PATH" -name "*.md" -not -name "README.md" -type f
+    }
+
+    # Get random file from vocabulary directory
+    get_random_file() {
+        local files=()
+        local temp_file=$(mktemp)
+        get_vocab_files > "$temp_file"
+        while IFS= read -r file; do
+            files+=("$file")
+        done < "$temp_file"
+        rm "$temp_file"
+        
+        if [[ ${#files[@]} -eq 0 ]]; then
+            echo "Error: No vocabulary files found"
+            return 1
+        fi
+        
+        local random_index=$((RANDOM % ${#files[@]}))
+        echo "${files[$random_index]}"
+    }
+
+    # Extract sections (lines starting with ##) from file
+    get_sections() {
+        local file="$1"
+        grep "^## " "$file" | sed 's/^## //'
+    }
+
+    # Get random section from file
+    get_random_section() {
+        local file="$1"
+        local sections=()
+        
+        local temp_file=$(mktemp)
+        get_sections "$file" > "$temp_file"
+        while IFS= read -r section; do
+            sections+=("$section")
+        done < "$temp_file"
+        rm "$temp_file"
+        
+        if [[ ${#sections[@]} -eq 0 ]]; then
+            echo "Error: No sections found in file"
+            return 1
+        fi
+        
+        local random_index=$((RANDOM % ${#sections[@]}))
+        echo "${sections[$random_index]}"
+    }
+
+    # Extract words from a specific section
+    get_words_from_section() {
+        local file="$1"
+        local section="$2"
+        local in_section=false
+        local words=()
+        
+        while IFS= read -r line; do
+            # Check if we've reached the target section
+            if [[ "$line" == "## $section" ]]; then
+                in_section=true
+                continue
+            fi
+            
+            # Check if we've reached the next section (but not empty lines)
+            if [[ "$line" =~ ^##[[:space:]] ]] && [[ "$in_section" == true ]]; then
+                break
+            fi
+            
+            # If we're in the target section, extract words (skip empty lines)
+            if [[ "$in_section" == true ]] && [[ "$line" =~ ^-[[:space:]] ]]; then
+                # Extract full line (word and translation)
+                local word_line=$(echo "$line" | sed 's/^- //')
+                # Check if it contains a dash separator
+                if [[ -n "$word_line" ]] && [[ "$word_line" == *" - "* ]]; then
+                    words+=("$word_line")
+                fi
+            fi
+        done < "$file"
+        
+        # If no words found, return error
+        if [[ ${#words[@]} -eq 0 ]]; then
+            return 1
+        fi
+        
+        printf '%s\n' "${words[@]}"
+    }
+
+    # Get random word from section
+    get_random_word() {
+        local file="$1"
+        local section="$2"
+        local words=()
+        
+        local temp_file=$(mktemp)
+        get_words_from_section "$file" "$section" > "$temp_file"
+        while IFS= read -r word; do
+            words+=("$word")
+        done < "$temp_file"
+        rm "$temp_file"
+        
+        if [[ ${#words[@]} -eq 0 ]]; then
+            echo "Error: No words found in section '$section'"
+            return 1
+        fi
+        
+        local random_index=$((RANDOM % ${#words[@]}))
+        echo "${words[$random_index]}"
+    }
+
+    # Main function logic with retry
+    echo "🇸🇪 Swedish Vocabulary Practice"
+    echo "==============================="
+    
+    local max_attempts=10
+    local attempt=1
+    
+    while [[ $attempt -le $max_attempts ]]; do
+        # Get random file
+        local random_file=$(get_random_file)
+        if [[ $? -ne 0 ]]; then
+            return 1
+        fi
+        
+        local filename=$(basename "$random_file" .md)
+        
+        # Get random section
+        local random_section=$(get_random_section "$random_file")
+        if [[ $? -ne 0 ]]; then
+            ((attempt++))
+            continue
+        fi
+        
+        # Get random word
+        local random_word=$(get_random_word "$random_file" "$random_section")
+        if [[ $? -ne 0 ]]; then
+            ((attempt++))
+            continue
+        fi
+        
+        # Success! Parse and display results
+        echo "File: $filename"
+        echo "Section: $random_section"
+        
+        # Parse Swedish and English parts
+        local swedish_part=$(echo "$random_word" | sed 's/ - .*//')
+        local english_part=$(echo "$random_word" | sed 's/[^-]* - //')
+        
+        echo "Swedish: $swedish_part"
+        echo "English: $english_part"
+        return 0
+        
+        ((attempt++))
+    done
+    
+    echo "Error: Could not find a valid word after $max_attempts attempts"
+    return 1
+}
+
+# Make function available when sourced
+# swedish_word "$@"
