@@ -34,7 +34,6 @@ opt.clipboard:append("unnamedplus") -- use clipboard default register
 -- split windows
 opt.splitright = true
 opt.splitbelow = true
-
 opt.hlsearch = false -- Set highlight on search
 
 opt.breakindent = true -- Enable break indent
