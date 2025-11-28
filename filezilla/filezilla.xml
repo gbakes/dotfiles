@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<FileZilla3 version="3.69.3" platform="mac">
+	<Settings>
+		<Setting name="Use Pasv mode">1</Setting>
+		<Setting name="Limit local ports">0</Setting>
+		<Setting name="Limit ports low">6000</Setting>
+		<Setting name="Limit ports high">7000</Setting>
+		<Setting name="Limit ports offset">0</Setting>
+		<Setting name="External IP mode">0</Setting>
+		<Setting name="External IP" />
+		<Setting name="External address resolver">http://ip.filezilla-project.org/ip.php</Setting>
+		<Setting name="Last resolved IP" />
+		<Setting name="No external ip on local conn">1</Setting>
+		<Setting name="Pasv reply fallback mode">0</Setting>
+		<Setting name="Timeout">20</Setting>
+		<Setting name="Logging Debug Level">0</Setting>
+		<Setting name="Logging Raw Listing">0</Setting>
+		<Setting name="Allow transfermode fallback">1</Setting>
+		<Setting name="Reconnect count">2</Setting>
+		<Setting name="Reconnect delay">5</Setting>
+		<Setting name="Enable speed limits">0</Setting>
+		<Setting name="Speedlimit inbound">1000</Setting>
+		<Setting name="Speedlimit outbound">100</Setting>
+		<Setting name="Speedlimit burst tolerance">0</Setting>
+		<Setting name="Preallocate space">0</Setting>
+		<Setting name="View hidden files">0</Setting>
+		<Setting name="Preserve timestamps">0</Setting>
+		<Setting name="Socket recv buffer size (v2)">4194304</Setting>
+		<Setting name="Socket send buffer size (v2)">262144</Setting>
+		<Setting name="FTP Keep-alive commands">0</Setting>
+		<Setting name="FTP Proxy type">0</Setting>
+		<Setting name="FTP Proxy host" />
+		<Setting name="FTP Proxy user" />
+		<Setting name="FTP Proxy password" />
+		<Setting name="FTP Proxy login sequence" />
+		<Setting name="SFTP keyfiles" platform="mac" />
+		<Setting name="SFTP compression">0</Setting>
+		<Setting name="Proxy type">0</Setting>
+		<Setting name="Proxy host" />
+		<Setting name="Proxy port">0</Setting>
+		<Setting name="Proxy user" />
+		<Setting name="Proxy password" />
+		<Setting name="Logging file" platform="mac" />
+		<Setting name="Logging filesize limit">10</Setting>
+		<Setting name="Size format">0</Setting>
+		<Setting name="Size thousands separator">1</Setting>
+		<Setting name="Size decimal places">1</Setting>
+		<Setting name="TCP Keepalive Interval">15</Setting>
+		<Setting name="Cache TTL">600</Setting>
+		<Setting name="Minimum TLS Version">2</Setting>
+		<Setting name="Directory listing item limit">10000000</Setting>
+		<Setting name="Kiosk mode">0</Setting>
+		<Setting name="Master password encryptor" />
+		<Setting name="Trust system trust store">0</Setting>
+		<Setting name="Ascii Binary mode">0</Setting>
+		<Setting name="Auto Ascii files">ac|am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diff|diz|h|hpp|htm|html|in|inc|java|js|jsp|lua|m4|mak|md5|nfo|nsh|nsi|pas|patch|pem|php|phtml|pl|po|pot|py|qmail|sh|sha1|sha256|sha512|shtml|sql|svg|tcl|tpl|txt|vbs|xhtml|xml|xrc</Setting>
+		<Setting name="Auto Ascii no extension">1</Setting>
+		<Setting name="Auto Ascii dotfiles">1</Setting>
+		<Setting name="Comparison threshold">1</Setting>
+		<Setting name="Remote recursive operation list refresh">0</Setting>
+		<Setting name="Update Check">1</Setting>
+		<Setting name="Update Check Interval">7</Setting>
+		<Setting name="Update Check Check Beta">0</Setting>
+		<Setting name="Cache directory" platform="mac" />
+		<Setting name="Number of Transfers">2</Setting>
+		<Setting name="Language Code" />
+		<Setting name="Concurrent download limit">0</Setting>
+		<Setting name="Concurrent upload limit">0</Setting>
+		<Setting name="Show debug menu">0</Setting>
+		<Setting name="File exists action download">0</Setting>
+		<Setting name="File exists action upload">0</Setting>
+		<Setting name="Allow ascii resume">0</Setting>
+		<Setting name="Greeting resources" />
+		<Setting name="Onetime Dialogs" />
+		<Setting name="Show Tree Local">1</Setting>
+		<Setting name="Show Tree Remote">1</Setting>
+		<Setting name="File Pane Layout">0</Setting>
+		<Setting name="File Pane Swap">0</Setting>
+		<Setting name="Filelist directory sort">0</Setting>
+		<Setting name="Filelist name sort">1</Setting>
+		<Setting name="Queue successful autoclear">0</Setting>
+		<Setting name="Time Format" />
+		<Setting name="Date Format" />
+		<Setting name="Show message log">1</Setting>
+		<Setting name="Show queue">1</Setting>
+		<Setting name="Default editor" platform="mac" />
+		<Setting name="Always use default editor">0</Setting>
+		<Setting name="File associations (v2)" platform="mac" />
+		<Setting name="Comparison mode">1</Setting>
+		<Setting name="Icon theme">default</Setting>
+		<Setting name="Icon scale">125</Setting>
+		<Setting name="Timestamp in message log">0</Setting>
+		<Setting name="Filelist status bar">1</Setting>
+		<Setting name="Filter toggle state">0</Setting>
+		<Setting name="Show quickconnect bar">1</Setting>
+		<Setting name="Messagelog position">0</Setting>
+		<Setting name="File doubleclick action">0</Setting>
+		<Setting name="Dir doubleclick action">0</Setting>
+		<Setting name="Minimize to tray">0</Setting>
+		<Setting name="Search column widths" />
+		<Setting name="Search column shown" />
+		<Setting name="Search column order" />
+		<Setting name="Search window size" />
+		<Setting name="Comparison hide identical">0</Setting>
+		<Setting name="Search sort order" />
+		<Setting name="Edit track local">1</Setting>
+		<Setting name="Prevent idle sleep">1</Setting>
+		<Setting name="Filteredit window size" />
+		<Setting name="Enable invalid char filter">1</Setting>
+		<Setting name="Invalid char replace">_</Setting>
+		<Setting name="Already connected choice">0</Setting>
+		<Setting name="Edit status dialog size" />
+		<Setting name="Display current speed">0</Setting>
+		<Setting name="Toolbar hidden">0</Setting>
+		<Setting name="Strip VMS revisions">0</Setting>
+		<Setting name="Startup action">0</Setting>
+		<Setting name="Persistent Choices">0</Setting>
+		<Setting name="Queue completion action">1</Setting>
+		<Setting name="Queue completion command" />
+		<Setting name="Drag and Drop disabled">0</Setting>
+		<Setting name="Disable update footer">0</Setting>
+		<Setting name="Highest shown overlay id">0</Setting>
+		<Setting name="Resolve local symlinks" platform="mac">0</Setting>
+		<Setting name="Last automatic update check">2025-11-12 08:27:41</Setting>
+		<Setting name="Greeting version">3.69.3</Setting>
+		<Setting name="Last automatic update version">3.69.3</Setting>
+		<Setting name="Update Check New Version" platform="mac">nightly 2025-11-12 https://filezilla-project.org/nightlies/2025-11-12/aarch64-apple-darwin23.1.0/FileZilla3.app.tar.bz2 14051415 sha512 c1ed4103ca091b10aa93ea2abc364b99ac65f4307ebaff5ab700efc5f0793e6c9441883064de5d2217b67ae2a851e1ab515569bee5eb968136b798d61367e2ef sig:pGskWu98LFqXZnbFbcSfLhPcrzI0Abg9v5p17dpvXF5Ct0QokDaumvvwMiK7gh9bfRFTw4S1nEW307l8rI+IBw
+release 3.69.3 https://dl1.cdn.filezilla-project.org/FileZilla_3.69.3_macos-arm64.app.tar.bz2 14163674 sha512 11c8df96c4a98f07e154da94ddc33c5ca77cc96205fbe0bc7a496cda9e04e8f003b7f671d6afe8f85e42bad2cd7f71bedd730d6f84f4e321568effb545ce92ec sig:UiuMOReSxnpIRU3AXCKVOWrblfaO6rO+9Ht1SuPIu5ugHtYNw34b4k/71Hd/4ikFIqEmbIRFAe5yOQLarHOjBA
+</Setting>
+		<Setting name="Sitemanager last selected">0/4NetSatisfactory</Setting>
+		<Setting name="Prompt password save">0</Setting>
+		<Setting name="Queue column widths">180 60 180 80 60 150</Setting>
+		<Setting name="Local filelist colwidths">170 80 120 120</Setting>
+		<Setting name="Local filelist shown columns">1111</Setting>
+		<Setting name="Remote filelist shown columns">111111</Setting>
+		<Setting name="Local filelist column order">0,1,2,3</Setting>
+		<Setting name="Remote filelist column order">0,1,2,3,4,5</Setting>
+		<Setting name="Local filelist sortorder">0 0</Setting>
+		<Setting name="Remote filelist colwidths">484 75 80 206 80 108</Setting>
+		<Setting name="Remote filelist sortorder">1 0</Setting>
+		<Setting name="Site Manager position">0 -1488 295 1056 470 </Setting>
+		<Setting name="Window position and size">0 -1910 20 1900 955 </Setting>
+		<Setting name="Splitter positions (v2)">98 -145 318518518 250 436 500000000</Setting>
+		<Setting name="Tab data" sensitive="1">
+			<Tabs>
+				<Tab connected="1" selected="1">
+					<Host>65.108.10.190</Host>
+					<Port>21</Port>
+					<Protocol>6</Protocol>
+					<Type>0</Type>
+					<User>gs1183041</User>
+					<Pass encoding="base64">RlQzWXBuUkQ=</Pass>
+					<Logontype>1</Logontype>
+					<PasvMode>MODE_DEFAULT</PasvMode>
+					<EncodingType>Auto</EncodingType>
+					<BypassProxy>0</BypassProxy>
+					<Name>4NetSatisfactory</Name>
+					<Site>0/4NetSatisfactory</Site>
+					<RemotePath>1 0 7 .config 4 Epic 11 FactoryGame 5 Saved 9 SaveGames 6 server</RemotePath>
+					<LocalPath>/Users/georgebaker/Downloads/</LocalPath>
+				</Tab>
+			</Tabs>
+		</Setting>
+	</Settings>
+</FileZilla3>
