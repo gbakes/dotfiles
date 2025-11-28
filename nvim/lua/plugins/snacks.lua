@@ -8,22 +8,18 @@ return {
     dashboard = {
       sections = {
         { section = "header" },
-        { section = "keys", gap = 1, padding = 1 },
-        { pane = 2, icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
-        { pane = 2, icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
+        -- { section = "keys", gap = 1, padding = 1 },
+        { icon = "📁", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
+        { icon = "💼", title = "Projects", section = "projects", indent = 2, padding = 1 },
         {
-          pane = 2,
-          icon = " ",
-          title = "Git Status",
+          -- icon = "🇸🇪",
+          -- title = "Swedish Word",
           section = "terminal",
-          enabled = function()
-            return Snacks.git.get_root() ~= nil
-          end,
-          cmd = "git status --short --branch --renames",
-          height = 5,
+          cmd = "zsh -ic 'swedish_word'",
+          ttl = 5,
+          height = 8,
           padding = 1,
-          ttl = 5 * 60,
-          indent = 3,
+          indent = 2,
         },
         { section = "startup" },
       },
@@ -76,9 +72,21 @@ return {
     {
       "<leader>ee",
       function()
-        Snacks.explorer()
+        -- Store the initial project directory when nvim starts
+        if not vim.g.project_root then
+          vim.g.project_root = vim.fn.getcwd()
+        end
+        Snacks.explorer({ cwd = vim.g.project_root })
       end,
       desc = "Explorer",
+    },
+    {
+      "<leader>er",
+      function()
+        vim.g.project_root = vim.fn.getcwd()
+        print("Project root set to: " .. vim.g.project_root)
+      end,
+      desc = "Set Explorer Root",
     },
 
     -- Picker/Find
@@ -158,4 +166,3 @@ return {
     },
   },
 }
-

@@ -8,6 +8,7 @@ return {
           settings = {
             basedpyright = {
               analysis = {
+                diagnosticMode = "workspace",
                 typeCheckingMode = "basic",
                 autoSearchPaths = true,
                 useLibraryCodeForTypes = true,
@@ -16,7 +17,7 @@ return {
             },
           },
         },
-        
+
         -- Lua LSP
         lua_ls = {
           settings = {
@@ -37,7 +38,7 @@ return {
             },
           },
         },
-        
+
         -- YAML LSP
         yamlls = {
           settings = {
@@ -54,17 +55,26 @@ return {
             },
           },
         },
+
+        -- dbt Language Server
+        dbt = {
+          cmd = { "dbt-language-server" },
+          filetypes = { "sql", "yaml" },
+          root_dir = function(fname)
+            return require("lspconfig").util.root_pattern("dbt_project.yml")(fname)
+          end,
+        },
       },
     },
   },
-  
+
   -- Mason tool installer
   {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
         "basedpyright",
-        "lua-language-server", 
+        "lua-language-server",
         "yaml-language-server",
         "stylua",
         "black",
@@ -73,3 +83,4 @@ return {
     },
   },
 }
+
