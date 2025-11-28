@@ -1,3 +1,17 @@
+# Fix tmux compatibility issues and optimize startup
+if [[ -n "$TMUX" ]] || [[ -n "$FAST_STARTUP" ]]; then
+  unsetopt monitor 2>/dev/null || true
+  # Disable gitstatus in tmux to prevent initialization errors
+  export POWERLEVEL9K_DISABLE_GITSTATUS=true
+  export GITSTATUS_ENABLE=0
+  # Skip expensive initializations in tmux for faster startup
+  export TMUX_FAST_MODE=1
+fi
+
+# Disable gitstatus entirely to prevent initialization errors
+export POWERLEVEL9K_DISABLE_GITSTATUS=true
+export GITSTATUS_ENABLE=0
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -29,9 +43,45 @@ SAVEHIST=1000
 HISTSIZE=999
 setopt HIST_EXPIRE_DUPS_FIRST
 
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+
+# Lazy-load pyenv on first python/pip/pyenv command
+if [[ -n "$FAST_STARTUP" ]]; then
+  function python() {
+    unfunction python pip pyenv 2>/dev/null
+    eval "$(pyenv init -)"
+    python "$@"
+  }
+  function pip() {
+    unfunction python pip pyenv 2>/dev/null
+    eval "$(pyenv init -)"
+    pip "$@"
+  }
+  function pyenv() {
+    unfunction python pip pyenv 2>/dev/null
+    eval "$(pyenv init -)"
+    pyenv "$@"
+  }
+else
+  eval "$(pyenv init -)"
+fi
+
 # ---- Zoxide (better cd) ----
-eval "$(zoxide init zsh)"
-alias cd="z"
+# Only initialize zoxide if not in fast tmux mode
+if [[ -z "$TMUX_FAST_MODE" ]]; then
+  eval "$(zoxide init zsh)"
+fi
+# Lazy-load zoxide when z command is used in tmux
+if [[ -n "$TMUX_FAST_MODE" ]]; then
+  z() {
+    unfunction z
+    eval "$(zoxide init zsh)"
+    z "$@"
+  }
+else
+  alias cd="z"
+fi
 
 # ---- Eza (better ls) -----
 alias ls="eza --icons=always"
@@ -48,6 +98,15 @@ alias projects='cd "/Users/georgebaker/Documents/2. Projects"'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Source custom functions
+source ~/.config/oh-my-zsh/functions/swedish_word
+source ~/.config/oh-my-zsh/functions/cgp
+source ~/.config/oh-my-zsh/functions/gitprofile
+source ~/.config/oh-my-zsh/functions/gitcheck
+source ~/.config/oh-my-zsh/functions/test_gitprofile
+source ~/.config/oh-my-zsh/functions/nvim_selector
+source ~/.config/oh-my-zsh/functions/killport
 alias vi='nvim'
 alias vim='nvim'
 
@@ -55,20 +114,4 @@ alias v='nvim' # default Neovim config
 alias vk='NVIM_APPNAME=nvim-kickstart nvim' # Kickstart
 alias va='NVIM_APPNAME=nvim-astrovim nvim' # AstroVim
 
-vv() {
-  # Assumes all configs exist in directories named ~/.config/nvim-*
-  local config=$(fd --max-depth 1 --glob 'nvim-*' ~/.config | fzf --prompt="Neovim Configs > " --height=~50% --layout=reverse --border --exit-0)
- 
-  # If I exit fzf without selecting a config, don't open Neovim
-  [[ -z $config ]] && echo "No config selected" && return
- 
-  # Open Neovim with the selected config
-  NVIM_APPNAME=$(basename $config) nvim $@
-}
 
-(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
