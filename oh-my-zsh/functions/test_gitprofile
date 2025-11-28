@@ -1,0 +1,54 @@
+#!/usr/bin/env zsh
+
+# Test script for gitprofile function
+test_gitprofile() {
+  echo "================================"
+  echo "GitProfile Function Test"
+  echo "================================"
+  echo ""
+  
+  # Test the regex that was fixed
+  echo "Testing URL parsing fix..."
+  echo ""
+  
+  local test_urls=(
+    "git@github.com:user/repo.git"
+    "git@github.com-work:GeoGuessrInternal/geoguessr-dw.git"
+    "git@github.com-personal:gbakes/my-project.git"
+  )
+  
+  for url in "${test_urls[@]}"; do
+    echo "Input:  $url"
+    
+    # This is the FIXED regex from gitprofile
+    local repo_path=$(echo "$url" | sed -E 's|.*github\.com[^:]*:||' | sed 's|\.git$||')
+    echo "Output: $repo_path"
+    
+    # Validate
+    if [[ "$repo_path" == git@* ]]; then
+      echo "❌ FAIL: Still has git@ prefix (duplication would occur)"
+    elif [[ "$repo_path" == *github.com* ]]; then
+      echo "❌ FAIL: Still has github.com in path"
+    elif [[ -n "$repo_path" ]] && [[ "$repo_path" != "$url" ]] && [[ "$repo_path" == */* ]]; then
+      echo "✓ PASS: Correctly extracted repo path"
+    else
+      echo "❌ FAIL: Could not extract repo path"
+    fi
+    echo ""
+  done
+  
+  echo "================================"
+  echo ""
+  echo "Manual Test Recommendations:"
+  echo ""
+  echo "1. Run 'gitcheck' to see your current profile"
+  echo "2. Run 'gitprofile' to switch profiles"
+  echo "3. Run 'gitcheck' again to verify the switch"
+  echo ""
+  echo "Expected behavior:"
+  echo "- Work repos should use github.com-work"
+  echo "- Personal repos should use github.com-personal"
+  echo "- Remote URLs should NOT have duplicated prefixes"
+  echo ""
+}
+

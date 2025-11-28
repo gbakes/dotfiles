@@ -1,0 +1,83 @@
+#!/bin/zsh
+
+killport() {
+    # Check if fzf is available
+    if ! command -v fzf &> /dev/null; then
+        echo "fzf is required but not installed. Please install fzf first."
+        return 1
+    fi
+
+    # Get all processes with open network connections
+    local all_processes=$(lsof -i -P -n 2>/dev/null | grep "LISTEN" | while read line; do
+        local port=$(echo "$line" | sed -n 's/.*\*:\([0-9]*\) (LISTEN).*/\1/p')
+        local pid=$(echo "$line" | awk '{print $2}')
+        local user=$(echo "$line" | awk '{print $3}')
+        local command=$(echo "$line" | awk '{print $1}')
+        
+        if [[ -n "$port" && "$port" =~ ^[0-9]+$ ]]; then
+            printf "Port:%s PID:%s USER:%s COMMAND:%s ARGS:%s\n" "$port" "$pid" "$user" "$command" "$line"
+        fi
+    done | sort -t: -k2 -n)
+    
+    if [[ -z "$all_processes" ]]; then
+        echo "No processes found with listening ports"
+        return 1
+    fi
+    
+    # Use fzf to search and select
+    local selected=$(echo "$all_processes" | fzf \
+        --height=60% \
+        --border \
+        --prompt="Search by port or process name: " \
+        --header="Type port number or process name to filter" \
+        --preview='echo {} | cut -d" " -f5-' \
+        --preview-window="bottom:3:wrap" \
+        --bind="ctrl-c:abort" \
+        --no-multi \
+        --layout=reverse)
+    
+    if [[ -z "$selected" ]]; then
+        echo "No process selected"
+        return 0
+    fi
+    
+    # Extract information from selected line
+    local port=$(echo "$selected" | sed -n 's/Port:\([0-9]*\).*/\1/p')
+    local pid=$(echo "$selected" | sed -n 's/.*PID:\([0-9]*\).*/\1/p')
+    local user=$(echo "$selected" | sed -n 's/.*USER:\([^ ]*\).*/\1/p')
+    local command=$(echo "$selected" | sed -n 's/.*COMMAND:\([^ ]*\).*/\1/p')
+    
+    # Show detailed confirmation
+    echo ""
+    echo "═══════════════════════════════════════"
+    echo "PROCESS DETAILS:"
+    echo "═══════════════════════════════════════"
+    echo "Port:    $port"
+    echo "PID:     $pid"
+    echo "User:    $user" 
+    echo "Command: $command"
+    echo ""
+    echo "Full process info:"
+    echo "$(echo "$selected" | cut -d' ' -f5-)"
+    echo "═══════════════════════════════════════"
+    echo ""
+    
+    echo -n "Are you sure you want to kill this process? [y/N]: "
+    read -r confirm
+    
+    if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
+        echo ""
+        echo "Killing process $pid..."
+        kill -9 "$pid"
+        
+        if [[ $? -eq 0 ]]; then
+            echo "✅ Process $pid killed successfully"
+        else
+            echo "❌ Failed to kill process $pid"
+            return 1
+        fi
+    else
+        echo "Cancelled"
+        return 0
+    fi
+}

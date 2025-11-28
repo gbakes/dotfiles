@@ -122,7 +122,7 @@ EOF
       local current_remote=$(git remote get-url origin 2>/dev/null)
       if [[ -n "$current_remote" ]]; then
         # Extract repo path from current remote
-        local repo_path=$(echo "$current_remote" | sed -E 's|.*github\.com[/:]||' | sed 's|\.git$||')
+        local repo_path=$(echo "$current_remote" | sed -E 's|.*github\.com[^:]*:||' | sed 's|\.git$||')
         local new_remote="git@$ssh_host:$repo_path.git"
         
         git remote set-url origin "$new_remote"
