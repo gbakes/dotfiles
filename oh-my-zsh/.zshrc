@@ -66,8 +66,7 @@ vv() {
   NVIM_APPNAME=$(basename $config) nvim $@
 }
 
-(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Homebrew setup is handled in .zprofile
 
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
