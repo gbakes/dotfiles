@@ -1,0 +1,131 @@
+#!/usr/bin/env zsh
+
+# Git profile verification function
+gitcheck() {
+  echo "================================"
+  echo "Git Profile Check"
+  echo "================================"
+  echo ""
+  
+  # Check global git config
+  echo "📝 Global Git Config:"
+  local git_name=$(git config --global user.name)
+  local git_email=$(git config --global user.email)
+  echo "   Name:  $git_name"
+  echo "   Email: $git_email"
+  echo ""
+  
+  # Determine which profile this looks like
+  local profile_type="Unknown"
+  if [[ "$git_email" == *"@geoguessr.com"* ]]; then
+    profile_type="Work Profile ✓"
+  elif [[ "$git_email" == *"gbakes89@gmail.com"* ]]; then
+    profile_type="Personal Profile ✓"
+  else
+    profile_type="Unknown Profile ⚠️"
+  fi
+  echo "   Profile: $profile_type"
+  echo ""
+  
+  # Check SSH keys loaded in agent
+  echo "🔑 SSH Keys in Agent:"
+  ssh-add -l 2>/dev/null | grep -v "The agent has no identities" | while read -r line; do
+    echo "   $line"
+    # Highlight which key is which
+    if [[ "$line" == *"github_work"* ]] || [[ "$line" == *"git_work"* ]]; then
+      echo "      → Work SSH key"
+    elif [[ "$line" == *"github_personal"* ]] || [[ "$line" == *"git_personal"* ]]; then
+      echo "      → Personal SSH key"
+    fi
+  done
+  
+  if ! ssh-add -l &>/dev/null; then
+    echo "   ⚠️  No SSH keys in agent"
+  fi
+  echo ""
+  
+  # Check current repo (if in one)
+  if git rev-parse --git-dir > /dev/null 2>&1; then
+    echo "📂 Current Repository:"
+    local repo_root=$(git rev-parse --show-toplevel)
+    local repo_name=$(basename "$repo_root")
+    echo "   Path: $repo_root"
+    echo "   Name: $repo_name"
+    echo ""
+    
+    echo "🌐 Remote Configuration:"
+    local remote_url=$(git remote get-url origin 2>/dev/null)
+    if [[ -n "$remote_url" ]]; then
+      echo "   Remote: $remote_url"
+      
+      # Extract SSH host and validate
+      if [[ "$remote_url" =~ git@([^:]+): ]]; then
+        local ssh_host="${match[1]}"
+        echo "   SSH Host: $ssh_host"
+        
+        # Determine if work or personal
+        if [[ "$ssh_host" == *"-work"* ]]; then
+          echo "   Type: Work Remote ✓"
+          if [[ "$profile_type" != "Work Profile ✓" ]]; then
+            echo "   ⚠️  WARNING: Work remote but not using work profile!"
+          fi
+        elif [[ "$ssh_host" == *"-personal"* ]]; then
+          echo "   Type: Personal Remote ✓"
+          if [[ "$profile_type" != "Personal Profile ✓" ]]; then
+            echo "   ⚠️  WARNING: Personal remote but not using personal profile!"
+          fi
+        else
+          echo "   Type: Standard GitHub"
+        fi
+        
+        # Test SSH connection
+        echo ""
+        echo "🔌 Testing SSH Connection..."
+        local ssh_test=$(ssh -T git@$ssh_host 2>&1)
+        if [[ "$ssh_test" == *"successfully authenticated"* ]]; then
+          echo "   ✓ SSH connection successful!"
+          # Extract GitHub username from response
+          if [[ "$ssh_test" =~ "Hi ([^!]+)!" ]]; then
+            local github_user="${match[1]}"
+            echo "   GitHub User: $github_user"
+          fi
+        else
+          echo "   ✗ SSH connection failed"
+          echo "   Response: $ssh_test"
+        fi
+      else
+        echo "   Type: HTTPS or non-standard remote"
+      fi
+    else
+      echo "   No remote configured"
+    fi
+    echo ""
+    
+    # Check for any profile mismatches
+    echo "🎯 Profile Status:"
+    local mismatch=0
+    
+    if [[ "$remote_url" == *"-work"* ]] && [[ "$profile_type" != "Work Profile ✓" ]]; then
+      echo "   ⚠️  MISMATCH: Work repository but $profile_type"
+      mismatch=1
+    elif [[ "$remote_url" == *"-personal"* ]] && [[ "$profile_type" != "Personal Profile ✓" ]]; then
+      echo "   ⚠️  MISMATCH: Personal repository but $profile_type"
+      mismatch=1
+    elif [[ "$profile_type" == "Work Profile ✓" ]] && [[ "$remote_url" == *"-work"* ]]; then
+      echo "   ✓ Correct: Work profile with work repository"
+    elif [[ "$profile_type" == "Personal Profile ✓" ]] && [[ "$remote_url" == *"-personal"* ]]; then
+      echo "   ✓ Correct: Personal profile with personal repository"
+    fi
+    
+    if [[ $mismatch -eq 1 ]]; then
+      echo ""
+      echo "   Run 'gitprofile' to switch to the correct profile"
+    fi
+  else
+    echo "📂 Not in a git repository"
+  fi
+  
+  echo ""
+  echo "================================"
+}
+

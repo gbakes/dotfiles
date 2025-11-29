@@ -119,12 +119,8 @@ return {
       img_folder = "assets/imgs",
     },
 
-    -- Automatically change directory when workspace changes
-    callbacks = {
-      post_set_workspace = function(client, workspace)
-        vim.cmd("cd " .. tostring(workspace.path))
-      end,
-    },
+    -- Directory remains at project root when switching Obsidian workspaces
+    -- This prevents the file explorer from jumping to the notes folder
   },
 }
 

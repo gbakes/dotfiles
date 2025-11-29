@@ -7,3 +7,5 @@ tmux/plugins/tpm/
 tmux/plugins/**/
 .zsh_history
 .zhistory
+tmux-client-40660.log
+.DS_Store

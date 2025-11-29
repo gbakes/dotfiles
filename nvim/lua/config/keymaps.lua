@@ -143,6 +143,10 @@ end)
 
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
+-- Window navigation is handled by vim-tmux-navigator plugin
+-- Do not override the plugin's keymaps as it provides smarter navigation
+-- between vim panes and tmux panes
+
 -- Obsidian keymaps
 keymap.set("n", "<leader>on", "<cmd>ObsidianNew<CR>", { desc = "Create new Obsidian note" })
 keymap.set("n", "<leader>oo", "<cmd>ObsidianOpen<CR>", { desc = "Open note in Obsidian app" })
