@@ -9,3 +9,5 @@ tmux/plugins/**/
 .zhistory
 tmux-client-40660.log
 .DS_Store
+lazy-lock.json
+nvim/lazy-lock.json
