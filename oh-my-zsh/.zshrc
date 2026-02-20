@@ -1,12 +1,12 @@
 # Fix tmux compatibility issues and optimize startup
-if [[ -n "$TMUX" ]] || [[ -n "$FAST_STARTUP" ]]; then
-  unsetopt monitor 2>/dev/null || true
-  # Disable gitstatus in tmux to prevent initialization errors
-  export POWERLEVEL9K_DISABLE_GITSTATUS=true
-  export GITSTATUS_ENABLE=0
-  # Skip expensive initializations in tmux for faster startup
-  export TMUX_FAST_MODE=1
-fi
+# if [[ -n "$TMUX" ]] || [[ -n "$FAST_STARTUP" ]]; then
+#   unsetopt monitor 2>/dev/null || true
+#   # Disable gitstatus in tmux to prevent initialization errors
+#   export POWERLEVEL9K_DISABLE_GITSTATUS=true
+#   export GITSTATUS_ENABLE=0
+#   # Skip expensive initializations in tmux for faster startup
+#   export TMUX_FAST_MODE=1
+# fi
 
 # Disable gitstatus entirely to prevent initialization errors
 export POWERLEVEL9K_DISABLE_GITSTATUS=true
@@ -17,12 +17,14 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Claude path
+export PATH="$HOME/.local/bin:$PATH"
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.config/oh-my-zsh"
 
 # Add Docker Desktop for Mac (docker)
-export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
+# export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
 
 # Set name of the theme to load --- if set to "random", it will
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -45,43 +47,11 @@ setopt HIST_EXPIRE_DUPS_FIRST
 
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-
-# Lazy-load pyenv on first python/pip/pyenv command
-if [[ -n "$FAST_STARTUP" ]]; then
-  function python() {
-    unfunction python pip pyenv 2>/dev/null
-    eval "$(pyenv init -)"
-    python "$@"
-  }
-  function pip() {
-    unfunction python pip pyenv 2>/dev/null
-    eval "$(pyenv init -)"
-    pip "$@"
-  }
-  function pyenv() {
-    unfunction python pip pyenv 2>/dev/null
-    eval "$(pyenv init -)"
-    pyenv "$@"
-  }
-else
-  eval "$(pyenv init -)"
-fi
+eval "$(pyenv init -)"
 
 # ---- Zoxide (better cd) ----
-# Only initialize zoxide if not in fast tmux mode
-if [[ -z "$TMUX_FAST_MODE" ]]; then
-  eval "$(zoxide init zsh)"
-fi
-# Lazy-load zoxide when z command is used in tmux
-if [[ -n "$TMUX_FAST_MODE" ]]; then
-  z() {
-    unfunction z
-    eval "$(zoxide init zsh)"
-    z "$@"
-  }
-else
-  alias cd="z"
-fi
+eval "$(zoxide init zsh)"
+alias cd="z"
 
 # ---- Eza (better ls) -----
 alias ls="eza --icons=always"
