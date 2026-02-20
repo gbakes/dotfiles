@@ -1,12 +1,13 @@
+typeset -U PATH
 # Fix tmux compatibility issues and optimize startup
-# if [[ -n "$TMUX" ]] || [[ -n "$FAST_STARTUP" ]]; then
-#   unsetopt monitor 2>/dev/null || true
-#   # Disable gitstatus in tmux to prevent initialization errors
-#   export POWERLEVEL9K_DISABLE_GITSTATUS=true
-#   export GITSTATUS_ENABLE=0
-#   # Skip expensive initializations in tmux for faster startup
-#   export TMUX_FAST_MODE=1
-# fi
+if [[ -n "$TMUX" ]] || [[ -n "$FAST_STARTUP" ]]; then
+  unsetopt monitor 2>/dev/null || true
+  # Disable gitstatus in tmux to prevent initialization errors
+  export POWERLEVEL9K_DISABLE_GITSTATUS=true
+  export GITSTATUS_ENABLE=0
+  # Skip expensive initializations in tmux for faster startup
+  export TMUX_FAST_MODE=1
+fi
 
 # Disable gitstatus entirely to prevent initialization errors
 export POWERLEVEL9K_DISABLE_GITSTATUS=true
@@ -17,11 +18,12 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Claude path
-export PATH="$HOME/.local/bin:$PATH"
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.config/oh-my-zsh"
+
+# Personal projects directory
+#export PROJECTS="$HOME/Documents/2. Projects"
 
 # Add Docker Desktop for Mac (docker)
 # export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
@@ -85,3 +87,5 @@ alias vk='NVIM_APPNAME=nvim-kickstart nvim' # Kickstart
 alias va='NVIM_APPNAME=nvim-astrovim nvim' # AstroVim
 
 
+# Claude path
+export PATH="$HOME/.local/bin:$PATH"
