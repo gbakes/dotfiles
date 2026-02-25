@@ -49,14 +49,19 @@ setopt HIST_EXPIRE_DUPS_FIRST
 
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+if command -v pyenv &>/dev/null; then
+  eval "$(pyenv init -)"
+fi
 
 # ---- Zoxide (better cd) ----
-eval "$(zoxide init zsh)"
-alias cd="z"
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+  alias cd="z"
+fi
 
 # ---- Eza (better ls) -----
 alias ls="eza --icons=always"
+alias ll="eza -la --icons=always"
 alias e="exit"
 
 alias kbuild='bash /Users/georgebaker/Documents/2.\ Projects/zmk_sofle2/local_build/flash.sh'
@@ -85,6 +90,7 @@ alias vim='nvim'
 alias v='nvim' # default Neovim config
 alias vk='NVIM_APPNAME=nvim-kickstart nvim' # Kickstart
 alias va='NVIM_APPNAME=nvim-astrovim nvim' # AstroVim
+vv() { NVIM_APPNAME=nvim-lite nvim "$@" } # nvim-lite
 
 
 # Claude path
