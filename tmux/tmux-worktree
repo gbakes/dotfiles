@@ -76,29 +76,32 @@ done < <(git -C "$git_root" branch -r --format='%(refname:short)')
 
 rm -f "$wt_map"
 
-if [[ -z "$fzf_list" ]]; then
-    echo "No branches available (only primary branch '${primary_branch}' exists)."
-    read -r -p "Press Enter to close..."
-    exit 0
-fi
-
 selected=$(echo "$fzf_list" | grep -v '^$' | fzf \
     --reverse \
     --delimiter=$'\t' \
     --with-nth=1,2,4 \
-    --header="Worktrees for [${repo_name}]  (ctrl-x: remove worktree)" \
+    --header="Worktrees for [${repo_name}]  (enter: new branch, ctrl-x: remove)" \
     --expect=ctrl-x \
+    --print-query \
     --color='header:yellow,pointer:green' \
     --prompt="worktree> ")
 
-[[ -z "$selected" ]] && exit 0
+# --print-query output: line1=query, line2=key, line3=selected entry
+query=$(echo "$selected" | sed -n '1p')
+key=$(echo "$selected" | sed -n '2p')
+entry=$(echo "$selected" | sed -n '3p')
 
-key=$(echo "$selected" | head -1)
-entry=$(echo "$selected" | tail -1)
+[[ -z "$query" && -z "$entry" ]] && exit 0
 
 status=$(echo "$entry" | cut -f1)
 branch=$(echo "$entry" | cut -f2)
 wt_path=$(echo "$entry" | cut -f3)
+
+# No match selected — create new branch from query
+if [[ -z "$entry" && -n "$query" ]]; then
+    branch="$query"
+    status="new"
+fi
 
 if [[ "$key" == "ctrl-x" ]]; then
     if [[ "$status" != "✓" ]]; then
@@ -125,6 +128,21 @@ if [[ "$status" == "✓" ]]; then
     if ! tmux has-session -t "$sess" 2>/dev/null; then
         tmux new-session -d -s "$sess" -c "$wt_path"
     fi
+    tmux switch-client -t "$sess"
+elif [[ "$status" == "new" ]]; then
+    safe=$(safe_branch "$branch")
+    target_path="$worktrees_dir/$safe"
+
+    echo "Creating new branch '${branch}' from '${primary_branch}'..."
+    git -C "$git_root" worktree add -b "$branch" "$target_path" "$primary_branch"
+
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to create worktree."
+        read -r -p "Press Enter to close..."
+        exit 1
+    fi
+
+    tmux new-session -d -s "$sess" -c "$target_path"
     tmux switch-client -t "$sess"
 else
     safe=$(safe_branch "$branch")
