@@ -80,8 +80,8 @@ selected=$(echo "$fzf_list" | grep -v '^$' | fzf \
     --reverse \
     --delimiter=$'\t' \
     --with-nth=1,2,4 \
-    --header="Worktrees for [${repo_name}]  (enter: new branch, ctrl-x: remove)" \
-    --expect=ctrl-x \
+    --header="Worktrees for [${repo_name}]  (ctrl-n: new branch, ctrl-x: remove)" \
+    --expect=ctrl-x,ctrl-n \
     --print-query \
     --color='header:yellow,pointer:green' \
     --prompt="worktree> ")
@@ -97,8 +97,11 @@ status=$(echo "$entry" | cut -f1)
 branch=$(echo "$entry" | cut -f2)
 wt_path=$(echo "$entry" | cut -f3)
 
-# No match selected — create new branch from query
-if [[ -z "$entry" && -n "$query" ]]; then
+# Force-create new branch from query (ctrl-n) or no match selected
+if [[ "$key" == "ctrl-n" && -n "$query" ]]; then
+    branch="$query"
+    status="new"
+elif [[ -z "$entry" && -n "$query" ]]; then
     branch="$query"
     status="new"
 fi
@@ -142,6 +145,8 @@ elif [[ "$status" == "new" ]]; then
         exit 1
     fi
 
+    [[ -x "$git_root/.worktree-setup" ]] && "$git_root/.worktree-setup" "$target_path" "$git_root"
+
     tmux new-session -d -s "$sess" -c "$target_path"
     tmux switch-client -t "$sess"
 else
@@ -160,6 +165,8 @@ else
         read -r -p "Press Enter to close..."
         exit 1
     fi
+
+    [[ -x "$git_root/.worktree-setup" ]] && "$git_root/.worktree-setup" "$target_path" "$git_root"
 
     tmux new-session -d -s "$sess" -c "$target_path"
     tmux switch-client -t "$sess"
