@@ -60,8 +60,8 @@ if command -v zoxide &>/dev/null; then
 fi
 
 # ---- Eza (better ls) -----
-alias ls="eza --icons=always"
-alias ll="eza -la --icons=always"
+alias ls="eza --icons=always --grid --group-directories-first"
+alias ll="eza -la --icons=always --grid --group-directories-first"
 alias e="exit"
 
 alias kbuild='bash /Users/georgebaker/Documents/2.\ Projects/zmk_sofle2/local_build/flash.sh'
