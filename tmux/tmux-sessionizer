@@ -2,13 +2,11 @@
 
 # Common project directories to search
 dirs=(
-  "$HOME/projects"
-  "$HOME/work"
-  "$HOME/dev"
-  "$HOME/code"
+  "$HOME/Documents"
+  "$HOME/Documents/Work"
+  "$HOME/Documents/Personal"
   "$HOME/.config"
-  "$HOME/Documents/notes"
-  "$HOME/Documents/work"
+  "$HOME/Documents/Notes"
   "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Personal"
   "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Documents"
 )
@@ -45,4 +43,3 @@ fi
 # Switch to the session and exit this window
 tmux switch-client -t "$session_name"
 tmux kill-window
-

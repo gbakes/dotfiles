@@ -1,3 +1,4 @@
+typeset -U PATH
 # Fix tmux compatibility issues and optimize startup
 if [[ -n "$TMUX" ]] || [[ -n "$FAST_STARTUP" ]]; then
   unsetopt monitor 2>/dev/null || true
@@ -21,8 +22,11 @@ fi
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.config/oh-my-zsh"
 
+# Personal projects directory
+#export PROJECTS="$HOME/Documents/2. Projects"
+
 # Add Docker Desktop for Mac (docker)
-export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
+# export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
 
 # Add Flutter to PATH
 export PATH="$PATH:$HOME/develop/flutter/bin"
@@ -48,46 +52,19 @@ setopt HIST_EXPIRE_DUPS_FIRST
 
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-
-# Lazy-load pyenv on first python/pip/pyenv command
-if [[ -n "$FAST_STARTUP" ]]; then
-  function python() {
-    unfunction python pip pyenv 2>/dev/null
-    eval "$(pyenv init -)"
-    python "$@"
-  }
-  function pip() {
-    unfunction python pip pyenv 2>/dev/null
-    eval "$(pyenv init -)"
-    pip "$@"
-  }
-  function pyenv() {
-    unfunction python pip pyenv 2>/dev/null
-    eval "$(pyenv init -)"
-    pyenv "$@"
-  }
-else
+if command -v pyenv &>/dev/null; then
   eval "$(pyenv init -)"
 fi
 
 # ---- Zoxide (better cd) ----
-# Only initialize zoxide if not in fast tmux mode
-if [[ -z "$TMUX_FAST_MODE" ]]; then
+if command -v zoxide &>/dev/null; then
   eval "$(zoxide init zsh)"
-fi
-# Lazy-load zoxide when z command is used in tmux
-if [[ -n "$TMUX_FAST_MODE" ]]; then
-  z() {
-    unfunction z
-    eval "$(zoxide init zsh)"
-    z "$@"
-  }
-else
   alias cd="z"
 fi
 
 # ---- Eza (better ls) -----
-alias ls="eza --icons=always"
+alias ls="eza --icons=always --grid --group-directories-first"
+alias ll="eza -la --icons=always --grid --group-directories-first"
 alias e="exit"
 
 alias kbuild='bash /Users/georgebaker/Documents/2.\ Projects/zmk_sofle2/local_build/flash.sh'
@@ -116,5 +93,8 @@ alias vim='nvim'
 alias v='nvim' # default Neovim config
 alias vk='NVIM_APPNAME=nvim-kickstart nvim' # Kickstart
 alias va='NVIM_APPNAME=nvim-astrovim nvim' # AstroVim
+vv() { NVIM_APPNAME=nvim-lite nvim "$@" } # nvim-lite
 
 
+# Claude path
+export PATH="$HOME/.local/bin:$PATH"

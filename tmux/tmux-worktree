@@ -1,0 +1,173 @@
+#!/usr/bin/env bash
+
+# Ensure homebrew and common paths are available in non-interactive popup shells
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+PANE_PATH="${1:-$(pwd)}"
+
+git_root=$(git -C "$PANE_PATH" rev-parse --show-toplevel 2>/dev/null)
+if [[ -z "$git_root" ]]; then
+    echo "Not inside a git repository: $PANE_PATH"
+    read -r -p "Press Enter to close..."
+    exit 1
+fi
+
+repo_name=$(basename "$git_root")
+worktrees_dir="$git_root/.worktrees"
+mkdir -p "$worktrees_dir"
+
+safe_branch() {
+    echo "$1" | tr '/' '-' | tr '.' '_'
+}
+
+session_name() {
+    echo "${repo_name}-$(safe_branch "$1")"
+}
+
+primary_branch=$(git -C "$git_root" symbolic-ref --short HEAD 2>/dev/null)
+
+# Parse linked worktrees into a temp file: path<TAB>branch
+wt_map=$(mktemp)
+current_path=""
+while IFS= read -r line; do
+    if [[ "$line" == worktree\ * ]]; then
+        current_path="${line#worktree }"
+    elif [[ "$line" == branch\ * ]]; then
+        branch="${line#branch refs/heads/}"
+        if [[ "$current_path" != "$git_root" ]]; then
+            printf '%s\t%s\n' "$current_path" "$branch" >> "$wt_map"
+        fi
+        current_path=""
+    fi
+done < <(git -C "$git_root" worktree list --porcelain)
+
+linked_branches=$(awk -F'\t' '{print $2}' "$wt_map")
+
+# Build fzf list
+fzf_list=""
+
+# Existing linked worktrees
+while IFS=$'\t' read -r wt_path branch; do
+    sess=$(session_name "$branch")
+    if tmux has-session -t "$sess" 2>/dev/null; then
+        extra="[session active]"
+    else
+        extra="[no session]"
+    fi
+    fzf_list+="✓	${branch}	${wt_path}	${extra}"$'\n'
+done < "$wt_map"
+
+# Local branches without worktrees (exclude primary)
+while IFS= read -r branch; do
+    [[ "$branch" == "$primary_branch" ]] && continue
+    echo "$linked_branches" | grep -qxF "$branch" && continue
+    fzf_list+="+	${branch}		"$'\n'
+done < <(git -C "$git_root" branch --format='%(refname:short)')
+
+# Remote-only branches
+while IFS= read -r remote_branch; do
+    branch="${remote_branch#origin/}"
+    [[ "$branch" == "HEAD" ]] && continue
+    [[ "$branch" == "$primary_branch" ]] && continue
+    git -C "$git_root" show-ref --verify --quiet "refs/heads/$branch" && continue
+    echo "$linked_branches" | grep -qxF "$branch" && continue
+    fzf_list+="+	${branch}		"$'\n'
+done < <(git -C "$git_root" branch -r --format='%(refname:short)')
+
+rm -f "$wt_map"
+
+selected=$(echo "$fzf_list" | grep -v '^$' | fzf \
+    --reverse \
+    --delimiter=$'\t' \
+    --with-nth=1,2,4 \
+    --header="Worktrees for [${repo_name}]  (ctrl-n: new branch, ctrl-x: remove)" \
+    --expect=ctrl-x,ctrl-n \
+    --print-query \
+    --color='header:yellow,pointer:green' \
+    --prompt="worktree> ")
+
+# --print-query output: line1=query, line2=key, line3=selected entry
+query=$(echo "$selected" | sed -n '1p')
+key=$(echo "$selected" | sed -n '2p')
+entry=$(echo "$selected" | sed -n '3p')
+
+[[ -z "$query" && -z "$entry" ]] && exit 0
+
+status=$(echo "$entry" | cut -f1)
+branch=$(echo "$entry" | cut -f2)
+wt_path=$(echo "$entry" | cut -f3)
+
+# Force-create new branch from query (ctrl-n) or no match selected
+if [[ "$key" == "ctrl-n" && -n "$query" ]]; then
+    branch="$query"
+    status="new"
+elif [[ -z "$entry" && -n "$query" ]]; then
+    branch="$query"
+    status="new"
+fi
+
+if [[ "$key" == "ctrl-x" ]]; then
+    if [[ "$status" != "✓" ]]; then
+        echo "No worktree exists for branch '${branch}'."
+        read -r -p "Press Enter to close..."
+        exit 0
+    fi
+    printf "Remove worktree for '%s' at '%s'? [y/N] " "$branch" "$wt_path"
+    read -r confirm
+    if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
+        git -C "$git_root" worktree remove --force "$wt_path"
+        echo "Worktree removed: ${wt_path}"
+        echo "(Tmux session '$(session_name "$branch")' was NOT killed — close it manually if needed.)"
+    else
+        echo "Cancelled."
+    fi
+    read -r -p "Press Enter to close..."
+    exit 0
+fi
+
+sess=$(session_name "$branch")
+
+if [[ "$status" == "✓" ]]; then
+    if ! tmux has-session -t "$sess" 2>/dev/null; then
+        tmux new-session -d -s "$sess" -c "$wt_path"
+    fi
+    tmux switch-client -t "$sess"
+elif [[ "$status" == "new" ]]; then
+    safe=$(safe_branch "$branch")
+    target_path="$worktrees_dir/$safe"
+
+    echo "Creating new branch '${branch}' from '${primary_branch}'..."
+    git -C "$git_root" worktree add -b "$branch" "$target_path" "$primary_branch"
+
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to create worktree."
+        read -r -p "Press Enter to close..."
+        exit 1
+    fi
+
+    [[ -x "$git_root/.worktree-setup" ]] && "$git_root/.worktree-setup" "$target_path" "$git_root"
+
+    tmux new-session -d -s "$sess" -c "$target_path"
+    tmux switch-client -t "$sess"
+else
+    safe=$(safe_branch "$branch")
+    target_path="$worktrees_dir/$safe"
+
+    echo "Creating worktree for '${branch}' at '${target_path}'..."
+    if git -C "$git_root" show-ref --verify --quiet "refs/heads/${branch}"; then
+        git -C "$git_root" worktree add "$target_path" "$branch"
+    else
+        git -C "$git_root" worktree add --track -b "$branch" "$target_path" "origin/${branch}"
+    fi
+
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to create worktree."
+        read -r -p "Press Enter to close..."
+        exit 1
+    fi
+
+    [[ -x "$git_root/.worktree-setup" ]] && "$git_root/.worktree-setup" "$target_path" "$git_root"
+
+    tmux new-session -d -s "$sess" -c "$target_path"
+    tmux switch-client -t "$sess"
+fi

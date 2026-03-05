@@ -34,10 +34,10 @@ config.tab_max_width = 32
 config.colors = {
   tab_bar = {
     background = "#282828",
-    active_tab = { 
-      bg_color = "#ebdbb2", 
+    active_tab = {
+      bg_color = "#ebdbb2",
       fg_color = "#282828",
-      intensity = "Bold"
+      intensity = "Bold",
     },
     inactive_tab = {
       bg_color = "#3c3836",
@@ -111,7 +111,7 @@ config.keys = {
   },
   {
     key = "c",
-    mods = "CTRL",
+    mods = "CTRL|SHIFT",
     action = wezterm.action.QuickSelectArgs({
       patterns = {
         "\\bhttps?://[^\\s]+", -- URLS
