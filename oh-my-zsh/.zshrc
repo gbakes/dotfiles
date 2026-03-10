@@ -28,6 +28,9 @@ export ZSH="$HOME/.config/oh-my-zsh"
 # Add Docker Desktop for Mac (docker)
 # export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
 
+# Add Flutter to PATH
+export PATH="$PATH:$HOME/develop/flutter/bin"
+
 # Set name of the theme to load --- if set to "random", it will
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
