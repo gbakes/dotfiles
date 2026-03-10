@@ -221,3 +221,24 @@ run = 'move-node-to-workspace W'
 if.app-id = 'com.todesktop.230313mzl4w4u92'
 run = 'move-node-to-workspace C'
 
+# Float popup/dialog windows
+# Use `aerospace list-windows --all` to identify titles of new problematic windows
+
+# JetBrains DataGrip dialogs
+[[on-window-detected]]
+if.app-id = 'com.jetbrains.datagrip'
+if.window-title-regex-substring = 'Settings|Preferences|Welcome|Tip of the Day|License|Plugins|Properties|Evaluate|Import|Export|Rename|Refactor'
+run = 'layout floating'
+
+# Slack huddles, calls, and popups
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+if.window-title-regex-substring = 'Huddle|Call|Screen [Ss]hare|Preferences'
+run = 'layout floating'
+
+# Spotify dialogs
+[[on-window-detected]]
+if.app-id = 'com.spotify.client'
+if.window-title-regex-substring = 'Preferences|Settings'
+run = 'layout floating'
+
