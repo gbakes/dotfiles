@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Called by client-session-changed hook to track session recency.
+# Skips recording when the switch was initiated by the cycle script.
+
+if [ "$(tmux show-option -gqv @_cycling)" = "1" ]; then
+    tmux set-option -gq @_cycling 0
+    exit 0
+fi
+
+HISTORY_FILE="$HOME/.config/tmux/.session-history"
+current=$(tmux display-message -p '#S')
+
+if [ -f "$HISTORY_FILE" ]; then
+    grep -v "^${current}$" "$HISTORY_FILE" > "${HISTORY_FILE}.tmp"
+    { echo "$current"; cat "${HISTORY_FILE}.tmp"; } > "$HISTORY_FILE"
+    rm -f "${HISTORY_FILE}.tmp"
+else
+    echo "$current" > "$HISTORY_FILE"
+fi

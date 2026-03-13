@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Cycle through sessions ordered by recency.
+# Usage: tmux-session-cycle prev|next
+
+direction=$1
+HISTORY_FILE="$HOME/.config/tmux/.session-history"
+current=$(tmux display-message -p '#S')
+active_sessions=$(tmux list-sessions -F '#S')
+
+# Build recency-ordered list from history, filtered to active sessions
+ordered=()
+if [ -f "$HISTORY_FILE" ]; then
+    while IFS= read -r session; do
+        if echo "$active_sessions" | grep -qx "$session"; then
+            ordered+=("$session")
+        fi
+    done < "$HISTORY_FILE"
+fi
+
+# Append any active sessions not yet in history
+while IFS= read -r session; do
+    found=0
+    for o in "${ordered[@]}"; do
+        [ "$o" = "$session" ] && { found=1; break; }
+    done
+    [ "$found" -eq 0 ] && ordered+=("$session")
+done <<< "$active_sessions"
+
+count=${#ordered[@]}
+[ "$count" -le 1 ] && exit 0
+
+# Find current position
+current_idx=0
+for i in "${!ordered[@]}"; do
+    [ "${ordered[$i]}" = "$current" ] && { current_idx=$i; break; }
+done
+
+# Calculate target index
+if [ "$direction" = "prev" ]; then
+    target_idx=$(( (current_idx - 1 + count) % count ))
+else
+    target_idx=$(( (current_idx + 1) % count ))
+fi
+
+# Set flag so the hook doesn't record this as a "real" switch, then switch
+tmux set-option -gq @_cycling 1
+tmux switch-client -t "${ordered[$target_idx]}"
+
+# Re-enter the session-cycle key table so bare ( and ) keep working
+tmux switch-client -T session-cycle
